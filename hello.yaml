@@ -1,0 +1,7 @@
+- name: Run the hello role 
+  hosts: local
+  connection: local
+  gather_facts: false
+  become: true
+  roles: 
+    - hello

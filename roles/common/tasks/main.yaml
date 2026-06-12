@@ -1,0 +1,4 @@
+- name: test call 
+  debug: 
+    msg: configuring the component "{{ component }}"
+

@@ -1,0 +1,13 @@
+- name: check the id of the user 
+  become: true
+  vars: 
+    ansible_password: 5913
+  ansible.builtin.command: id -u 
+  register: user_id
+  delay: 2
+  retries: 10
+  until: user_id.rc | int != 0 
+  
+- name: say hello   
+  debug: 
+    msg: "{{ user_id }}"
