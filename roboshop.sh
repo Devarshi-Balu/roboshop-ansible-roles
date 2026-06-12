@@ -54,7 +54,7 @@ ansible-playbook "${script_dir}/create_terminate_instances.yaml" \
 function validate_playbook(){
     if [[ $? -ne 0 ]]; then
         echo -e "$R Something is up, There is an error in running the role for the instance ... $1 ... $N"
-        caculate_total_time
+        calculate_total_time
         exit 1;
     else
         echo -e "$G completed the role for the instance ... $1 .... $N"

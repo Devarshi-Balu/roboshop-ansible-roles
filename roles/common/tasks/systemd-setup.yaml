@@ -4,5 +4,5 @@
     dest: "/etc/systemd/system/{{ component }}.service.j2"
   notify: 
     - systemd daemon reload
-    - restart {{ component }}
+    - restart service
 
