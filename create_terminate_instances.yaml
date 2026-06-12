@@ -65,7 +65,7 @@
 
         wait: false
         overwrite: true
-      loop: "{{ ec2_details.results | rejectattr('item', 'equalto', 'frontend') | list }}"
+      loop: "{{ ec2_details.results }}"
       when: instance_action == "create"
 
     #DNS record for the frontend 
