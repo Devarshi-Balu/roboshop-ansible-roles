@@ -3,6 +3,8 @@
     src: "{{ component }}.service.j2"
     dest: "/etc/systemd/system/{{ component }}.service.j2"
   notify: 
-    - systemd daemon reload
     - restart service
 
+- name: loading the {{ component }} service file 
+  ansible.builtin.systemd_service: 
+    daemon_reload: true
