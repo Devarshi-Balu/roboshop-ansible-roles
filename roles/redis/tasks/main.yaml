@@ -6,7 +6,7 @@
     name: redis
     state: present 
 
-- name: chage the poret binding to allow the remote connections 
+- name: change the port binding to allow the remote connections 
   ansible.builtin.replace: 
     path: /etc/redis/redis.conf
     regexp: '127.0.0.1'

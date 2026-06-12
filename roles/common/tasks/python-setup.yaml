@@ -5,11 +5,11 @@
   loop:   
     - python3 
     - gcc 
-    - python3-delevel
+    - python3-devel
   
 - name: install dependencies
   ansible.builtin.pip: 
-    requirements: requirements.ext 
+    requirements: requirements.txt 
     executable: pip3.9
   args: 
     chdir: /app

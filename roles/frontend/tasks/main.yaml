@@ -6,13 +6,13 @@
     name: nginx 
     state: present 
 
-- name: remote the entire directory 
+- name: remove the entire directory 
   ansible.builtin.file: 
     path: /usr/share/nginx/html
     state: absent
 
-- name: create htmll directory 
-  ansiblle.builtin.file: 
+- name: create html directory 
+  ansible.builtin.file: 
     path: /usr/share/nginx/html
     state: directory
 
@@ -21,13 +21,13 @@
     url: https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
     dest: /tmp/frontend.zip
 
-- name: unarchive the fronted 
+- name: unarchive the frontend 
   ansible.builtin.unarchive: 
     src: /tmp/frontend.zip
     dest: /usr/share/nginx/html
     remote_src: true
 
-- name: remote the default nginx config file 
+- name: remove the default nginx config file 
   ansible.builtin.file: 
     path: /etc/nginx/nginx.conf
     state: absent 

@@ -27,7 +27,7 @@
     url: https://roboshop-artifacts.s3.amazonaws.com/{{ component }}-v3.zip 
     dest: /tmp/{{ component }}.zip 
 
-- name: "unarchive the the {{ component }}"
+- name: "unarchive the {{ component }}"
   ansible.builtin.unarchive: 
     src: /tmp/{{ component }}.zip
     dest: /app

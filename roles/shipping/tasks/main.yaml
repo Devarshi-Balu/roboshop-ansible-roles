@@ -15,7 +15,7 @@
     
 - name: install python dependencies
   ansible.builtin.pip: 
-    executate: pip3.9 
+    executable: pip3.9 
     name: "{{ item }}"
   loop: 
     - cryptography

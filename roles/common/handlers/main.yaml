@@ -3,6 +3,6 @@
     name: "{{ component }}"
     state: restarted
   
-- name: systemd daemon relaod
+- name: systemd daemon reload
   ansible.builtin.systemd_service: 
     daemon_reload: true
