@@ -38,6 +38,9 @@ function calculate_total_time(){
 export ANSIBLE_CONFIG="${script_dir}/ansible.cfg"
 
 instances=("mongodb" "redis" "rabbitmq" "mysql" "catalogue" "cart" "user" "shipping" "payment" "dispatch" "frontend")
+dbs=("mongodb" "redis" "rabbitmq" "mysql")
+backends=("catalogue" "cart" "user" "shipping" "payment" "dispatch")
+frontends=("frontend")
 
 json_payload=$(jq -n \
     --argjson instances "$(printf '%s\n' "${instances[@]}" | jq -R . | jq -s .)" \
@@ -52,21 +55,53 @@ ansible-playbook "${script_dir}/create_terminate_instances.yaml" \
 
 
 function validate_playbook(){
-    if [[ $? -ne 0 ]]; then
+    status=$1
+    component=$2
+    if [[ $status -ne 0 ]]; then
         echo -e "$R Something is up, There is an error in running the role for the instance ... $1 ... $N"
         calculate_total_time
         exit 1;
     else
-        echo -e "$G completed the role for the instance ... $1 .... $N"
+        echo -e "$G completed the role for the instance ... $component .... $N"
     fi
 }
 
-validate_playbook "main-playbook-creating instances" 
+validate_playbook $? "main-playbook-creating instances"
 
-for instance in "${instances[@]}"; do
-    echo -e "$B running the role for the instance ... $instance .... $N"
+db_pids=()
+db_names=()
+for instance in "${dbs[@]}"; do
+    echo -e "$B running the role for DB instance ... $instance (parallel) .... $N"
+    ansible-playbook "${script_dir}/roboshop.yaml" -e component="$instance" &
+    db_pids+=("$!")
+    db_names+=("$instance")
+done
+
+for i in "${!db_pids[@]}"; do
+    wait "${db_pids[$i]}"
+    validate_playbook $? "${db_names[$i]}"
+    echo "==========================================================="
+done
+
+backend_pids=()
+backend_names=()
+for instance in "${backends[@]}"; do
+    echo -e "$B running the role for backend instance ... $instance (parallel) .... $N"
+    ansible-playbook "${script_dir}/roboshop.yaml" -e component="$instance" &
+    backend_pids+=("$!")
+    backend_names+=("$instance")
+done
+
+for i in "${!backend_pids[@]}"; do
+    wait "${backend_pids[$i]}"
+    validate_playbook $? "${backend_names[$i]}"
+    echo "==========================================================="
+done
+
+for instance in "${frontends[@]}"; do
+    echo -e "$B running the role for frontend instance ... $instance .... $N"
     ansible-playbook "${script_dir}/roboshop.yaml" -e component="$instance"
-    validate_playbook $instance
+    validate_playbook $? "$instance"
     echo "==========================================================="
 done
 
