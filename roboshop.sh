@@ -37,7 +37,7 @@ function calculate_total_time(){
 
 export ANSIBLE_CONFIG="${script_dir}/ansible.cfg"
 
-instances=("mongodb" "redis" "rabbitmq" "mysql" "catalogue" "cart" "user" "shipping" "payment" "frontend")
+instances=("mongodb" "redis" "rabbitmq" "mysql" "catalogue" "cart" "user" "shipping" "payment" "dispatch" "frontend")
 
 json_payload=$(jq -n \
     --argjson instances "$(printf '%s\n' "${instances[@]}" | jq -R . | jq -s .)" \

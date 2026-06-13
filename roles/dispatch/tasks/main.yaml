@@ -1,0 +1,20 @@
+- name: app setup 
+  ansible.builtin.import_role: 
+    name: common 
+    tasks_from: app-setup.yaml
+
+- name: go setup 
+  ansible.builtin.import_role: 
+    name: common 
+    tasks_from: go-setup.yaml
+
+- name: systemd setup 
+  ansible.builtin.import_role: 
+    name: common 
+    tasks_from: systemd-setup.yaml
+
+- name: start dispatch  
+  ansible.builtin.service: 
+    name: dispatch 
+    enabled: true
+    state: started
