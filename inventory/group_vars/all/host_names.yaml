@@ -1,0 +1,9 @@
+MONGODB_HOST: mongodb-dev.rb.devarshi.live
+CATALOGUE_HOST: catalogue-dev.rb.devarshi.live
+REDIS_HOST: redis-dev.rb.devarshi.live
+USER_HOST: user-dev.rb.devarshi.live
+CART_HOST: cart-dev.rb.devarshi.live
+MYSQL_HOST: mysql-dev.rb.devarshi.live
+SHIPPING_HOST: shipping-dev.rb.devarshi.live
+RABBITMQ_HOST: rabbitmq-dev.rb.devarshi.live
+PAYMENT_HOST: payment-dev.rb.devarshi.live
