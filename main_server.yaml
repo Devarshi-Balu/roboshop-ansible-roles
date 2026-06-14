@@ -1,0 +1,97 @@
+- name: setup main server for ansible runs
+  hosts: mainserver
+  gather_facts: false
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  become: true
+
+  tasks:
+    - name: Install system packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: 
+        - python3-pip
+        - python3-devel
+        - ansible
+
+    - name: Upgrade pip
+      ansible.builtin.pip:
+        executable: pip3
+        name: pip
+        state: latest
+
+    - name: Install Python dependencies
+      ansible.builtin.pip:
+        executable: pip3
+        name:
+          - pymysql
+          - cryptography
+          - awscli
+          - boto3
+          - boto
+          - botocore
+        state: present
+
+    - name: Verify boto3 installation
+      ansible.builtin.command:
+        cmd: python3 -c "import boto3, botocore; print('AWS libs OK')"
+      register: boto_check
+      changed_when: false
+
+    - name: Show verification result
+      ansible.builtin.debug:
+        var: boto_check.stdout
+
+    - name: Install MySQL collection
+      ansible.builtin.command:
+        cmd: ansible-galaxy collection install community.mysql --force
+
+    - name: Create .aws folder
+      ansible.builtin.copy:
+        src: /home/devarshi_balu/.aws/
+        dest: /home/ec2-user/.aws/
+        owner: ec2-user
+        group: ec2-user
+        mode: '0600'
+
+    - name: create ansible vault passwords folder
+      ansible.builtin.file:
+        path: /home/ec2-user/.ansible/.ansible_vault_passwords
+        state: directory
+        owner: ec2-user
+        group: ec2-user
+        mode: '0700'
+
+    - name: copy the vault password file
+      ansible.builtin.copy: 
+        src: /home/devarshi_balu/.ansible/.ansible_vault_passwords/.vault_password
+        dest: /home/ec2-user/.ansible/.ansible_vault_passwords/.vault_password
+        owner: ec2-user
+        group: ec2-user
+        mode: '0600'
+     
+    - name: Remove old repository
+      ansible.builtin.file:
+        path: /home/ec2-user/roboshop-ansible-roles
+        state: absent
+    
+    - name: Clone roboshop repo
+      become_user: ec2-user
+      ansible.builtin.git:
+        repo: https://github.com/devarshi-balu/roboshop-ansible-roles
+        dest: /home/ec2-user/roboshop-ansible-roles
+      register: repo_clone_output
+
+    - name: printing the output of the repo clone 
+      ansible.builtin.debug:
+        var: repo_clone_output
+  
+    - name: run the roboshop script on the remote server 
+      become_user: ec2-user
+      ansible.builtin.shell: 
+        cmd: bash "/home/ec2-user/roboshop-ansible-roles/roboshop.sh"
+      args: 
+        chdir: "/home/ec2-user/roboshop-ansible-roles/"
